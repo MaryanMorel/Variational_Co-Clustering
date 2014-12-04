@@ -9,10 +9,10 @@ class coclustering_1:
 # co-clustering without preferences value
 
 ## zone de test
-ber = 0.2
-berno = sctat.bernoulli(ber)
-data = berno.rvs((3,10))
-data1 = berno.rvs((20,10))
+##ber = 0.2
+##berno = sctat.bernoulli(ber)
+##data = berno.rvs((3,10))
+##data1 = berno.rvs((20,10))
 
 	def __init__(self, phi, data, mu, nx, ny, 
 			n_initx,n_clusterx, n_inity,n_clustery,
@@ -112,7 +112,19 @@ data1 = berno.rvs((20,10))
 		## self.q_x part
 		for i in [1:self.data_row]:
 			for i1 in [1:self.n_clusterx]:
-				self.q_x(i,i1) = 
+				A_pass = 0
+				for j in [1:self.data_col]:
+					for j1 in [1:self.n_clustery]:
+						A= A+ self.data(i,j)*q_y(j,j1)*np.log(phi(i1,j1)
+			self.q_x(i,i1) = A
+		## self.q_y part
+		for j in [1:self.data_col]:
+			for j1 in [1:self.n_clustery]:
+				A_pass = 0
+				for i in [1:self.data_row]:
+					for i1 in [1:self.n_clusterx]:
+						A= A+ self.data(i,j)*q_x(i,i1)*np.log(phi(i1,j1)
+			self.q_y(j,j1) = A
 
 	## inner M-step:
 		for i1 in [1:self.n_clusterx]:
@@ -134,20 +146,42 @@ data1 = berno.rvs((20,10))
 										axis=[0,2])*self.ny(j)
 	## Update of p_c and p_d:
 	## p_c
-	for i1 in [1:self.n_clusterx]:
-		A= 0
-		for i in [1:self.data_row]:
-			for j in [1:self.data_col]:
-				for j1 in [1:self.n_clustery]:
-				A = A + p_phi(i,j,i1,j1)
-		p_c(i1) = A
-	p_c = (1/sum(p_c)*p_c	
-	## p_c
-	for j1 in [1:self.n_clustery]:
-		A= 0
-		for i in [1:self.data_row]:
-			for j in [1:self.data_col]:
-				for i1 in [1:self.n_clusterx]:
-				A = A + p_phi(i,j,i1,j1)
-		p_d(j1) = A
-	p_d = (1/sum(p_d)*p_d		
+		for i1 in [1:self.n_clusterx]:
+			A= 0
+			for i in [1:self.data_row]:
+				for j in [1:self.data_col]:
+					for j1 in [1:self.n_clustery]:
+					A = A + p_phi(i,j,i1,j1)
+			p_c(i1) = A
+		p_c = (1/sum(p_c)*p_c	
+		## p_c
+		for j1 in [1:self.n_clustery]:
+			A= 0
+			for i in [1:self.data_row]:
+				for j in [1:self.data_col]:
+					for i1 in [1:self.n_clusterx]:
+					A = A + p_phi(i,j,i1,j1)
+			p_d(j1) = A
+		p_d = (1/sum(p_d)*p_d	
+	##############################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
