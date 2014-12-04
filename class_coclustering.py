@@ -17,6 +17,7 @@ data1 = berno.rvs((20,10))
 	def __init__(self, phi, data, mu, nx, ny, 
 			n_initx,n_clusterx, n_inity,n_clustery,
 			q_x, self.q_y, p_phi, phi,
+			p_c, p_d,
 			EM_n_cluster):
 		self.EM_n_cluster = EM_n_cluster
 		self.data =  # we need to generate some 
@@ -69,6 +70,17 @@ data1 = berno.rvs((20,10))
 						self.p_phi(i,j,i1,j1) = self.q_x(i,i1)*self.q_y(j,j1)
 		###########################
 
+		## intializations proba cluster  ###########################
+		self.p_c = np.zeros((self.n_clusterx,1))
+		self.p_d = np.zeros((self.n_clustery,1))
+		tablex = pd.DataFrame(kmeanx.predict(self.data))
+		tabley = pd.DataFrame(kmeany.predict(self.data))
+		for i1 in [1:self.n_clusterx]:
+			sef.p_c(i1) = tablex[tablex[0] == i1].shape[0]/self.data.shape[0]
+		for j1 in [1:self.n_clustery]:
+			sef.p_d(i1) = tabley[tabley[0] == i1].shape[0]/self.data.shape[0]
+		###########################
+
 		## intialization of phi  ###########################
 		self.phi = np.zeros((self.n_clusterx,self.n_clustery))
 		for i1 in [1:self.n_clusterx]:
@@ -88,10 +100,13 @@ data1 = berno.rvs((20,10))
 				### TODO : vérifier que l' on a bien une proba borné
 					Denominator2 = Denominator2 + np.sum(self.p_phi(:,j,:,j1), \
 										axis=[0,2])*self.ny(j)
+		###########################
 
 
 	def EM_step(self,EM_n_cluster):
 	## for i in [1:EM_n_cluster]
+
+	## Mise à jour des proba cluster
 
 	## inner E-step:
 		## self.q_x part
