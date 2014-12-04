@@ -78,7 +78,7 @@ data1 = berno.rvs((20,10))
 		for i1 in [1:self.n_clusterx]:
 			sef.p_c(i1) = tablex[tablex[0] == i1].shape[0]/self.data.shape[0]
 		for j1 in [1:self.n_clustery]:
-			sef.p_d(i1) = tabley[tabley[0] == i1].shape[0]/self.data.shape[0]
+			sef.p_d(j1) = tabley[tabley[0] == j1].shape[0]/self.data.shape[0]
 		###########################
 
 		## intialization of phi  ###########################
@@ -132,5 +132,22 @@ data1 = berno.rvs((20,10))
 				### TODO : vérifier que l' on a bien une proba borné
 					Denominator2 = Denominator2 + np.sum(self.p_phi(:,j,:,j1), \
 										axis=[0,2])*self.ny(j)
-
-	
+	## Update of p_c and p_d:
+	## p_c
+	for i1 in [1:self.n_clusterx]:
+		A= 0
+		for i in [1:self.data_row]:
+			for j in [1:self.data_col]:
+				for j1 in [1:self.n_clustery]:
+				A = A + p_phi(i,j,i1,j1)
+		p_c(i1) = A
+	p_c = (1/sum(p_c)*p_c	
+	## p_c
+	for j1 in [1:self.n_clustery]:
+		A= 0
+		for i in [1:self.data_row]:
+			for j in [1:self.data_col]:
+				for i1 in [1:self.n_clusterx]:
+				A = A + p_phi(i,j,i1,j1)
+		p_d(j1) = A
+	p_d = (1/sum(p_d)*p_d		
