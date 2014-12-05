@@ -58,13 +58,13 @@ class coClusteringAdjacency(object):
 			self.Q_yd = np.dot(self.data.T, np.dot(self.Q_xc, np.log(self.phi)))
 			# print(self.Q_xc)
 			# print(self.Q_yd)
-			## Update p_phi -> ÇA COUTE UNE BURNE
+			## Update p_phi
 			for j in range(self.M):
 				for c in range(self.K):
 					self.p_phi[:,j,c,:] = np.dot(self.Q_xc[:,c].reshape(self.N, 1), self.Q_yd[j,:].reshape(1, self.L))
 			self.p_phi = self.p_phi / np.sum(self.p_phi) # Normalization
-			if(np.sum(self.p_phi)):
-				raise Exception("Fuyez pauvre fous !")
+			#if(np.sum(self.p_phi) != 1):
+			#	raise Exception("np.sum(self.p_phi) = %i"%np.sum(self.p_phi))
 			## inner M-step:
 			DenominatorX = np.sum(np.sum(self.p_phi, axis=(1,3)) * self.nx.reshape(self.N,1), axis=0)
 			DenominatorY = np.sum(np.sum(self.p_phi, axis=(0,2)) * self.ny.reshape(self.M,1), axis=1)
