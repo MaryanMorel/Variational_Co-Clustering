@@ -1,4 +1,4 @@
-from numpy.random import choice, shuffle, random_integers, rand
+from numpy.random import choice, shuffle, random_integers, rand, seed
 from numpy import sort, arange, zeros, max
 from functools import partial
 from itertools import zip_longest
@@ -10,7 +10,8 @@ def replaceNone(x, N):
         x = (x[0], choice(arange(N), 1)[0])
     return x
 
-def sampleMatrix(nrows, ncols, nC, nD, preference_value=False):
+def sampleMatrix(nrows, ncols, nC, nD, preference_value=False, random_state=0):
+	seed(random_state)
 	## random clusters for rows
 	Xindexes = list(range(nrows))
 	cuts = choice(Xindexes[1:], nC-1, replace=False)
@@ -40,13 +41,11 @@ def sampleMatrix(nrows, ncols, nC, nD, preference_value=False):
 	## Generate observations 
 	M = zeros((nrows, ncols))
 	for (c, d) in association:
-		#print(c)
-		#print(d)
 		## Law for a specified cluster
 		p = rand(1, ncols)[0]
 		k = sum(p)
 		for i in D[d]:
-			p[i] += k*3
+			p[i] += k*1000
 		p = p / sum(p)
 		for i in C[c]:
 			index_UI = choice(arange(ncols), len(D[d])+random_integers(0,2,1)[0],replace=False, p=p)
