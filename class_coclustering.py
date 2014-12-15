@@ -67,11 +67,9 @@ class coClusteringAdjacency(object):
 			self.P_yd = self.P_yd / np.sum(self.P_yd, axis=(1)).reshape(self.M,1)
 			DenominatorX = np.sum(self.P_xc * self.nx.reshape(self.N,1), axis=0)
 			DenominatorY = np.sum(self.P_yd * self.ny.reshape(self.M,1), axis=1)
-			# DenominatorX = np.sum(np.sum(self.p_phi, axis=(1,3)) * self.nx.reshape(self.N,1), axis=0)
-			# DenominatorY = np.sum(np.sum(self.p_phi, axis=(0,2)) * self.ny.reshape(self.M,1), axis=1)
 			for c in range(self.K):
 				for d in range(self.L):
-					self.phi[c,d] = np.sum(self.p_phi[:,:,c,d] * self.data)/(DenominatorX[c]*DenominatorY[d]) #+ 1e-50
+					self.phi[c,d] = np.sum(self.p_phi[:,:,c,d] * self.data)/(DenominatorX[c]*DenominatorY[d]) + 1e-50
 			## Update of P_c and P_d:
 			old_Pc = self.P_c
 			self.P_c = np.sum(self.p_phi, axis=(0,1,3))
@@ -89,6 +87,18 @@ class coClusteringAdjacency(object):
 		D = np.argmax(np.round(self.P_yd, rounding), axis=1)
 		return(C,D)
 
+	def getClusterAssociation(self):
+		C_assoc = np.argmax(self.phi, axis=1)
+		D_assoc = np.argmax(self.phi, axis=0)
+		return(C_assoc, D_assoc)
+
+	def getLikelihood(self):
+		ll = np.zeros((self.N,self.M,self.K,self.L))
+		for i in range(self.N):
+			for j in range(self.M):
+				ll[i,j,:,:] = self.p_phi[i,j,:,:] * self.phi
+		ll = np.sum(self.data * np.sum(ll, axis=(2,3)))
+		return(ll)
 
 
 
