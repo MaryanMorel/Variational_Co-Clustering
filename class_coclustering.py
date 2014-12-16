@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import LabelBinarizer
 
+
 class coClusteringAdjacency(object):
 	"""Co-clustering without preferences value (adjacency matrix)"""
 	def __init__(self, data, K, L, maxIter, tol, random_state=3):
@@ -49,7 +50,7 @@ class coClusteringAdjacency(object):
 	def fit(self):
 		old_Pc = self.P_c + 1
 		old_Pd = self.P_d + 1
-		while(np.sum(np.abs(self.P_c - old_Pc)) + np.sum(np.abs(self.P_d - old_Pd)) and self.nbIter < self.maxIter):
+		while(np.sum(np.abs(self.P_c - old_Pc)) + np.sum(np.abs(self.P_d - old_Pd)) > self.tol and self.nbIter < self.maxIter):
 			self.nbIter = self.nbIter + 1
 			## E-Step
 			self.Q_xc = self.P_c * np.exp(np.dot(self.data, np.dot(self.Q_yd, np.log(self.phi).T)))
