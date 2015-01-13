@@ -38,14 +38,15 @@ class coClusteringAdjacency(object):
 		## intialization of phi  ###########################
 		self.phi = np.zeros((self.K,self.L))
 		self.P_xc = np.sum(self.p_phi, axis=(1,3))
-		self.P_xc = self.P_xc / np.sum(self.P_xc, axis=(1)).reshape(self.N,1)
+		self.P_xc = self.P_xc / np.sum(self.P_xc, axis=(1)).reshape(self.N,1) #+ 1e-50)
 		self.P_yd = np.sum(self.p_phi, axis=(0,2)) 
-		self.P_yd = self.P_yd / np.sum(self.P_yd, axis=(1)).reshape(self.M,1)
-		DenominatorX = np.sum(self.P_xc * self.nx.reshape(self.N,1), axis=0)
-		DenominatorY = np.sum(self.P_yd * self.ny.reshape(self.M,1), axis=1)
+		self.P_yd = self.P_yd / np.sum(self.P_yd, axis=(1)).reshape(self.M,1) #+ 1e-50)
+		DenominatorX = np.sum(self.P_xc * self.nx.reshape(self.N,1), axis=0) + 1e-20
+		DenominatorY = np.sum(self.P_yd * self.ny.reshape(self.M,1), axis=1) + 1e-20
 		for c in range(self.K):
 			for d in range(self.L):
-				self.phi[c,d] = np.sum(self.p_phi[:,:,c,d] * self.data)/(DenominatorX[c]*DenominatorY[d]) + 1e-100
+				self.phi[c,d] = np.sum(self.p_phi[:,:,c,d] * self.data)/(DenominatorX[c]*DenominatorY[d])
+		self.phi += 1e-20
 
 	def fit(self):
 		old_Pc = self.P_c + 1
@@ -54,9 +55,9 @@ class coClusteringAdjacency(object):
 			self.nbIter = self.nbIter + 1
 			## E-Step
 			self.Q_xc = self.P_c * np.exp(np.dot(self.data, np.dot(self.Q_yd, np.log(self.phi).T)))
-			self.Q_xc = self.Q_xc / np.sum(self.Q_xc,1).reshape(self.N,1) ## normalization
+			self.Q_xc = self.Q_xc / (np.sum(self.Q_xc,1).reshape(self.N,1) + 1e-100) ## normalization
 			self.Q_yd = self.P_d * np.exp(np.dot(self.data.T, np.dot(self.Q_xc, np.log(self.phi))))
-			self.Q_yd = (self.Q_yd / np.sum(self.Q_yd,1).reshape(self.M,1)) ## normalization
+			self.Q_yd = (self.Q_yd / (np.sum(self.Q_yd,1).reshape(self.M,1)) + 1e-100) ## normalization
 			## Update p_phi
 			for j in range(self.M):
 				for c in range(self.K):
@@ -70,7 +71,8 @@ class coClusteringAdjacency(object):
 			DenominatorY = np.sum(self.P_yd * self.ny.reshape(self.M,1), axis=1)
 			for c in range(self.K):
 				for d in range(self.L):
-					self.phi[c,d] = np.sum(self.p_phi[:,:,c,d] * self.data)/(DenominatorX[c]*DenominatorY[d]) + 1e-50
+					self.phi[c,d] = np.sum(self.p_phi[:,:,c,d] * self.data)/(DenominatorX[c]*DenominatorY[d])
+			self.phi += 1e-100
 			## Update of P_c and P_d:
 			old_Pc = self.P_c
 			self.P_c = np.sum(self.p_phi, axis=(0,1,3))
